@@ -4,6 +4,7 @@ import com.example.my_blog.domain.Member;
 import com.example.my_blog.dto.AddMemberRequest;
 import com.example.my_blog.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,13 +14,14 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //Security 설정 후 비밀번호 암호화 HS256
     public Member save(AddMemberRequest request) {
         Member member = Member.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
-                .password(request.getPassword())
+                .password(bCryptPasswordEncoder.encode(request.getPassword()))
                 .build();
         memberRepository.save(member);
 

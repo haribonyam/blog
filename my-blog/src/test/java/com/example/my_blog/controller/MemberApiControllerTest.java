@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,6 +43,9 @@ class MemberApiControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @BeforeEach
     public void mockMvcSetUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
@@ -54,7 +58,7 @@ class MemberApiControllerTest {
     public void addMember() throws Exception {
         final String url = "/api/members";
         final String email = "example@email.com";
-        final String password = "password";
+        final String password ="password";
         final String nickname = "nickname";
         final AddMemberRequest userRequest = new AddMemberRequest(email,password,nickname);
 
@@ -71,7 +75,8 @@ class MemberApiControllerTest {
 
         assertThat(members.get(0).getEmail()).isEqualTo(email);
         assertThat(members.get(0).getNickname()).isEqualTo(nickname);
-        assertThat(members.get(0).getPassword()).isEqualTo(password);
+        assertThat(members.get(0).getPassword()).isNotEqualTo(password);
+        assertThat(bCryptPasswordEncoder.matches(password, members.get(0).getPassword())).isTrue();
     }
 
     //duplicated --> "NNNN" : 중복 "NNNY" : 비중복
@@ -138,7 +143,7 @@ class MemberApiControllerTest {
     private Member createDefaultMember() {
         return memberRepository.save(
                 Member.builder()
-                        .password("password")
+                        .password(bCryptPasswordEncoder.encode("password"))
                         .email("example@email.com")
                         .nickname("nickname")
                         .build()
