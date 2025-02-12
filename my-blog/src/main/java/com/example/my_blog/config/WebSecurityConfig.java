@@ -23,6 +23,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer configure(){
         return (web) -> web.ignoring()
                 .requestMatchers("/static/**")
+                .requestMatchers("/**")
                 .requestMatchers(toH2Console());
     }
 
