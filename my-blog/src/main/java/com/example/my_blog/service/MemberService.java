@@ -41,4 +41,10 @@ public class MemberService {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new IllegalArgumentException("Not found : "+ nickname));
     }
+
+    public Member findById(Long memberId) {
+
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Not found memberId : "+memberId));
+    }
 }
