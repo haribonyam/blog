@@ -66,4 +66,9 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public Member update(String nickname) {
+        this.nickname = nickname;
+        return this;
+    }
 }
